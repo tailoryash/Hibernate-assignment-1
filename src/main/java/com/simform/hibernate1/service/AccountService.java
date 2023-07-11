@@ -15,6 +15,7 @@ public class AccountService {
     @Autowired
     private BankRepository bankRepository;
 
+
     public Account create(Account account) {
 
         account.getCustomer().add(account);
@@ -53,11 +54,15 @@ public class AccountService {
     }
 
     public Account updateByAccountNumber(String accountNumber, Account account) {
-        Account byAccountNumber = accountRepository.findByAccountNumber(accountNumber);
-        if(byAccountNumber != null){
-            byAccountNumber.getCustomer().add(account);
-            byAccountNumber.getBank().addAccount(account);
-            account.setId(byAccountNumber.getId());
+        Account existingAccount = accountRepository.findByAccountNumber(accountNumber);
+        if(existingAccount != null){
+            existingAccount.getCustomer().add(account);
+            if (existingAccount.getBank().getBankName() == account.getBank().getBankName()){
+                existingAccount.getBank().addAccount(account);
+            }else{
+                bankRepository.save(account.getBank());
+            }
+            account.setId(existingAccount.getId());
             accountRepository.save(account);
             return account;
         }else{

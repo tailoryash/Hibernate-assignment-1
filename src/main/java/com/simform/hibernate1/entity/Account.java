@@ -18,11 +18,11 @@ public class Account {
     @Column(name = "balance")
     private BigDecimal balance;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "bank_id")
     private Bank bank;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "customer_id")
     @JsonBackReference
     private Customer customer;
