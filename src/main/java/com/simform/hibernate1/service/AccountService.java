@@ -1,6 +1,7 @@
 package com.simform.hibernate1.service;
 
 import com.simform.hibernate1.entity.*;
+import com.simform.hibernate1.exception.*;
 import com.simform.hibernate1.repository.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -33,20 +34,34 @@ public class AccountService {
     }
 
     public Account findAccountDetailsByAccountNumber(String accountNumber) {
-        return accountRepository.findByAccountNumber(accountNumber);
+        Account byAccountNumber = accountRepository.findByAccountNumber(accountNumber);
+        if(byAccountNumber != null){
+            return byAccountNumber;
+        }else{
+            throw new UserNotFoundException();
+        }
     }
 
     public void deleteByAccountNumber(String accountNumber) {
         Account byAccountNumber = accountRepository.findByAccountNumber(accountNumber);
-        accountRepository.delete(byAccountNumber);
+        if(byAccountNumber != null){
+            accountRepository.delete(byAccountNumber);
+        }else{
+            throw new UserNotFoundException();
+        }
+
     }
 
     public Account updateByAccountNumber(String accountNumber, Account account) {
         Account byAccountNumber = accountRepository.findByAccountNumber(accountNumber);
-        byAccountNumber.getCustomer().add(account);
-        byAccountNumber.getBank().addAccount(account);
-        account.setId(byAccountNumber.getId());
-        accountRepository.save(account);
-        return account;
+        if(byAccountNumber != null){
+            byAccountNumber.getCustomer().add(account);
+            byAccountNumber.getBank().addAccount(account);
+            account.setId(byAccountNumber.getId());
+            accountRepository.save(account);
+            return account;
+        }else{
+            throw new UserNotFoundException();
+        }
     }
 }
